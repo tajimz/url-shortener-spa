@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ShortUrl;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,11 +16,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
+        
+        $testUser = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => bcrypt('password'),
         ]);
+
+        ShortUrl::factory()
+        ->count(5)
+        ->for($testUser)
+        ->create();
     }
 }

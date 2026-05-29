@@ -1,0 +1,25 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\ShortUrl;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<ShortUrl>
+ */
+class ShortUrlFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'long_url' => $this->faker->url(),
+            'short_code' => $this->faker->unique()->lexify('??????'), 
+        ];
+    }
+}
