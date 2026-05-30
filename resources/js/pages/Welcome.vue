@@ -215,6 +215,7 @@ const copyLink = async () => {
                     </div>
 
                     <div
+                        v-if="!$page.props.auth.user"
                         class="mt-4 flex flex-col items-start justify-between gap-4 rounded-xl border border-black/[0.08] bg-black/[0.04] p-4 text-left sm:mt-5 md:flex-row md:items-center dark:border-[#3E3E3A]/30 dark:bg-[#fffaed03]"
                     >
                         <div class="flex items-start gap-3">
@@ -222,7 +223,7 @@ const copyLink = async () => {
                             <p
                                 class="text-xs leading-normal text-[#52525b] sm:text-sm dark:text-[#A1A09A]"
                             >
-                                Using without logging in? Your links will
+                                You are not logged in. Your links will
                                 <strong
                                     class="text-[#b91c1c] dark:text-[#ff6b5c]"
                                     >expire in 24 hours</strong
