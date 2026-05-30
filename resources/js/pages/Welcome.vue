@@ -1,6 +1,36 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { dashboard, login, register } from '@/routes';
+import { ref } from 'vue';
+import axios from 'axios';
+const url = window.location.origin;
+const longUrl = ref('');
+const result = ref(null);
+const error = ref('');
+
+const submit = async () => {
+    try {
+        const response = await axios.post('/api/public/shorten', {
+            long_url: longUrl.value,
+        });
+
+        result.value = response.data.data;
+
+        console.log(result.value);
+    } catch (err) {
+        error.value = err?.response?.data?.message || 'Request failed';
+    }
+};
+const copied = ref(false);
+const copyLink = async () => {
+    const text = `${url}/${result.value.short_code}`;
+    await navigator.clipboard.writeText(text);
+
+    copied.value = true;
+    setTimeout(() => {
+        copied.value = false;
+    }, 1500);
+};
 </script>
 
 <template>
@@ -111,25 +141,77 @@ import { dashboard, login, register } from '@/routes';
                 <div
                     class="mx-auto mt-8 max-w-3xl rounded-2xl border border-black/[0.12] bg-white/80 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-all duration-300 focus-within:border-[#FF4433]/40 focus-within:ring-4 focus-within:ring-[#FF4433]/5 sm:mt-12 sm:p-5 dark:border-[#3E3E3A]/60 dark:bg-[#111110] dark:shadow-[0_15px_50px_rgba(0,0,0,0.4)] dark:focus-within:border-[#FF4433]/40"
                 >
-                    <div class="flex flex-col gap-3.5 sm:flex-row">
+                    <form
+                        @submit.prevent="submit"
+                        class="flex flex-col gap-3.5 sm:flex-row"
+                    >
                         <div class="group relative w-full flex-1">
                             <div
                                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-base transition-transform duration-200 group-focus-within:scale-110"
                             >
                                 🔗
                             </div>
+
                             <input
+                                v-model="longUrl"
+                                @input="
+                                    result = null;
+                                    copied = false;
+                                    error = null;
+                                "
+                                required
                                 type="url"
                                 placeholder="Paste your long link here..."
                                 class="w-full rounded-xl border border-black/[0.14] bg-white/70 py-3.5 pr-4 pl-12 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c] dark:focus:bg-[#161615]"
                             />
                         </div>
+
                         <button
-                            type="button"
+                            type="submit"
                             class="inline-flex w-full items-center justify-center rounded-xl bg-[#FF4433] px-8 py-3.5 text-base font-semibold whitespace-nowrap text-white shadow-[0_4px_12px_rgba(255,68,51,0.2)] transition-all duration-200 hover:scale-[1.02] hover:bg-[#e63222] active:scale-[0.98] sm:w-auto sm:py-4"
                         >
                             Shorten URL
                         </button>
+                    </form>
+                    <p v-if="error" class="mt-2 text-sm text-[#b91c1c]">
+                        {{ error }}
+                    </p>
+
+                    <div
+                        v-if="result"
+                        class="mx-auto mt-6 max-w-3xl animate-in duration-500 fade-in slide-in-from-top-4"
+                    >
+                        <div
+                            class="flex items-center gap-3 rounded-xl border border-[#FF4433]/20 bg-[#FF4433]/5 p-4 dark:border-[#FF4433]/30 dark:bg-[#FF4433]/10"
+                        >
+                            <div
+                                class="flex-1 truncate text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                            >
+                                <span class="mr-2 text-[#FF4433]">Result:</span>
+
+                                <a
+                                    :href="'/' + result.short_code"
+                                    target="_blank"
+                                    class="hover:underline"
+                                >
+                                    {{ url }}/{{ result.short_code }}
+                                </a>
+                            </div>
+
+                            <button
+                                type="button"
+                                @click="copyLink"
+                                class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200"
+                                :class="
+                                    copied
+                                        ? 'bg-[#FF4433] text-white shadow-[0_4px_12px_rgba(255,68,51,0.25)]'
+                                        : 'bg-white text-[#18181b] ring-1 ring-black/[0.1] hover:bg-neutral-50'
+                                "
+                            >
+                                <span v-if="copied">✓ Copied</span>
+                                <span v-else>Copy</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div
