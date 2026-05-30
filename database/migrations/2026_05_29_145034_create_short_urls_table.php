@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('short_urls', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('long_url');
-            $table->string('short_code',10)->unique();
+            $table->string('short_code', 10)->unique();
             $table->unsignedInteger('clicks')->default(0);
-            
-
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }

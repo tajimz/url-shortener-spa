@@ -64,7 +64,31 @@ class ShortUrlController extends Controller
     function redirect($short_code)
     {
         $shortUrl = ShortUrl::where('short_code', $short_code)->firstOrFail();
+
+        if ($shortUrl->expires_at && $shortUrl->expires_at->isPast()) {
+            abort(404);
+        }
+
         $shortUrl->increment('clicks');
+
         return redirect()->away($shortUrl->long_url);
+    }
+
+    function storePublic(Request $request)
+    {
+        $validated = $request->validate([
+            "long_url" => "required|url"
+        ]);
+        $shortCode = Str::random(6);
+        $shortUrl = ShortUrl::create([
+            'long_url' => $validated['long_url'],
+            'short_code' => $shortCode,
+            'expires_at' => now()->addHours(24),
+        ]);
+
+        return response()->json([
+            'message' => 'URL shortened successfully',
+            'data'    => $shortUrl
+        ], 201);
     }
 }

@@ -9,8 +9,12 @@ class ShortUrl extends Model
 {
     //
     use HasFactory;
-    protected $fillable = ['long_url', 'short_code', 'clicks'];
-    public function user (){
+    protected $fillable = ['long_url', 'short_code', 'clicks', 'expires_at'];
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

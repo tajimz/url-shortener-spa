@@ -17,3 +17,5 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 });
+Route::post('/public/shorten', [ShortUrlController::class, 'storePublic'])
+    ->middleware('throttle:10,1');
