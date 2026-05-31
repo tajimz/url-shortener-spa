@@ -51,7 +51,8 @@ class ShortUrlController extends Controller
 
         $shortUrl->delete();
 
-        return response()->json(['message' => 'URL deleted successfully']);
+        if ($request->expectsJson) return response()->json(['message' => 'URL deleted successfully']);
+        return back()->with('success', 'URL Deleted successfully!');
     }
     public function show(Request $request, $id)
     {

@@ -16,3 +16,4 @@ require __DIR__ . '/settings.php';
 Route::get('/{short_code}', [ShortUrlController::class, 'redirect']);
 
 Route::post('/urls', [ShortUrlController::class, 'store']);
+Route::delete('/urls/{id}', [ShortUrlController::class, 'destroy']);

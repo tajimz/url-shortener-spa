@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { dashboard } from '@/routes';
-import { Check, Pencil } from 'lucide-vue-next';
+import { Check, Pencil, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 defineOptions({
@@ -19,13 +19,27 @@ defineProps({
 const domain = window.location.hostname;
 
 const showToast = ref(false);
+const toastMessage = ref('URL copied to clipboard!');
 
 const copyToClipboard = (shortCode: string) => {
+    toastMessage.value = 'URL copied to clipboard!';
     const fullUrl = `${domain}/${shortCode}`;
     navigator.clipboard.writeText(fullUrl).then(() => {
         showToast.value = true;
-        setTimeout(() => (showToast.value = false), 2000);
+        setTimeout(() => (showToast.value = false), 1500);
     });
+};
+
+const deleteUrl = (id: number) => {
+    if (confirm('Are you sure you want to delete this link?')) {
+        router.delete(`/urls/${id}`, {
+            onSuccess: () => {
+                toastMessage.value = 'URL deleted successfully!';
+                showToast.value = true;
+                setTimeout(() => (showToast.value = false), 1500);
+            },
+        });
+    }
 };
 </script>
 
@@ -133,6 +147,12 @@ const copyToClipboard = (shortCode: string) => {
                                 class="text-neutral-300 transition-colors hover:text-[#FF4433]"
                             />
                         </Link>
+                        <button
+                            @click.stop="deleteUrl(url.id)"
+                            class="text-neutral-300 transition-colors hover:text-red-600"
+                        >
+                            <Trash2 class="size-5" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -152,7 +172,7 @@ const copyToClipboard = (shortCode: string) => {
         >
             <Check :size="20" stroke-width="3" />
 
-            <span class="text-sm font-semibold">URL copied to clipboard!</span>
+            <span class="text-sm font-semibold">{{ toastMessage }}</span>
         </div>
     </transition>
 </template>
