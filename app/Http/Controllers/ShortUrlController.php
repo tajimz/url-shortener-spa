@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ShortUrl;
+use App\Rules\NotARoute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ class ShortUrlController extends Controller
 
         $validated = $request->validate([
             'long_url' => 'required|url',
-            'short_code' => 'nullable|min:3|max:10|unique:short_urls,short_code',
+            'short_code' => ['nullable', 'min:3', 'max:10', 'unique:short_urls,short_code', new NotARoute(),],
         ]);
 
         $shortCode = $validated['short_code'] ?? Str::random(6);
