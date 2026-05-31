@@ -1,41 +1,43 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { dashboard, login, register } from '@/routes';
-import { ref } from 'vue';
-import axios from 'axios';
-const url = window.location.origin;
-const longUrl = ref('');
-const result = ref(null);
-const error = ref('');
+import { computed, ref } from 'vue';
+import { Check } from 'lucide-vue-next';
+const url = window.location.hostname;
 
 defineProps({
-    total_urls:Number,
-    total_clicks:Number,
-    total_users:Number
+    total_urls: Number,
+    total_clicks: Number,
+    total_users: Number,
 });
 
-const submit = async () => {
-    try {
-        const response = await axios.post('/api/public/shorten', {
-            long_url: longUrl.value,
-        });
+const form = useForm({
+    long_url: '',
+    short_code: '',
+});
 
-        result.value = response.data.data;
-
-        console.log(result.value);
-    } catch (err) {
-        error.value = err?.response?.data?.message || 'Request failed';
-    }
+const submit = () => {
+    form.post('/urls', {
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset('long_url', 'short_code');
+        },
+    });
 };
-const copied = ref(false);
-const copyLink = async () => {
-    const text = `${url}/${result.value.short_code}`;
-    await navigator.clipboard.writeText(text);
 
-    copied.value = true;
-    setTimeout(() => {
-        copied.value = false;
-    }, 1500);
+const page = usePage();
+const newShortUrl = computed(() => page.props.flash.short_url);
+
+const showToast = ref(false);
+
+const copyToClipboard = () => {
+    const fullUrl = `${url}/${newShortUrl.value.short_code}`;
+    navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast.value = true;
+        setTimeout(() => {
+            showToast.value = false;
+        }, 2000);
+    });
 };
 </script>
 
@@ -149,81 +151,117 @@ const copyLink = async () => {
                 >
                     <form
                         @submit.prevent="submit"
-                        class="flex flex-col gap-3.5 sm:flex-row"
+                        class="flex flex-col gap-3.5"
                     >
-                        <div class="group relative w-full flex-1">
-                            <div
-                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-base transition-transform duration-200 group-focus-within:scale-110"
-                            >
-                                🔗
+                        <div class="flex flex-col gap-3.5 sm:flex-row">
+                            <!-- LONG URL -->
+                            <div class="group relative w-full flex-[3]">
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-base transition-transform duration-200 group-focus-within:scale-110"
+                                >
+                                    🔗
+                                </div>
+
+                                <input
+                                    v-model="form.long_url"
+                                    required
+                                    type="url"
+                                    placeholder="Paste your long link here..."
+                                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 py-3.5 pr-4 pl-12 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c]"
+                                />
+                                <div
+                                    v-if="form.errors.long_url"
+                                    class="mt-1 text-xs text-red-500"
+                                >
+                                    {{ form.errors.long_url }}
+                                </div>
                             </div>
 
-                            <input
-                                v-model="longUrl"
-                                @input="
-                                    result = null;
-                                    copied = false;
-                                    error = null;
-                                "
-                                required
-                                type="url"
-                                placeholder="Paste your long link here..."
-                                class="w-full rounded-xl border border-black/[0.14] bg-white/70 py-3.5 pr-4 pl-12 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c] dark:focus:bg-[#161615]"
-                            />
+                            <!-- ALIAS -->
+                            <div
+                                v-if="$page.props.auth.user"
+                                class="relative w-full flex-[1]"
+                            >
+                                <input
+                                    v-model="form.short_code"
+                                    type="text"
+                                    placeholder="Alias (optional)"
+                                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c]"
+                                />
+                                <div
+                                    v-if="form.errors.short_code"
+                                    class="mt-1 text-xs text-red-500"
+                                >
+                                    {{ form.errors.short_code }}
+                                </div>
+                            </div>
                         </div>
 
                         <button
                             type="submit"
-                            class="inline-flex w-full items-center justify-center rounded-xl bg-[#FF4433] px-8 py-3.5 text-base font-semibold whitespace-nowrap text-white shadow-[0_4px_12px_rgba(255,68,51,0.2)] transition-all duration-200 hover:scale-[1.02] hover:bg-[#e63222] active:scale-[0.98] sm:w-auto sm:py-4"
+                            class="inline-flex w-full items-center justify-center rounded-xl bg-[#FF4433] px-8 py-3.5 text-base font-semibold text-white shadow-[0_4px_12px_rgba(255,68,51,0.2)] transition-all duration-200 hover:scale-[1.01] hover:bg-[#e63222] active:scale-[0.99] sm:py-4"
                         >
                             Shorten URL
                         </button>
                     </form>
-                    <p v-if="error" class="mt-2 text-sm text-[#b91c1c]">
-                        {{ error }}
-                    </p>
 
+                    <!-- SUCCESS RESULT (FLASH) -->
                     <div
-                        v-if="result"
-                        class="mx-auto mt-6 max-w-3xl animate-in duration-500 fade-in slide-in-from-top-4"
+                        v-if="newShortUrl"
+                        class="mx-auto mt-6 max-w-3xl animate-in fade-in slide-in-from-top-4"
                     >
                         <div
-                            class="flex items-center gap-3 rounded-xl border border-[#FF4433]/20 bg-[#FF4433]/5 p-4 dark:border-[#FF4433]/30 dark:bg-[#FF4433]/10"
+                            class="flex flex-col gap-3 rounded-xl border border-[#FF4433]/20 bg-[#FF4433]/5 p-4 text-left dark:border-[#FF4433]/30 dark:bg-[#FF4433]/10"
                         >
                             <div
-                                class="flex-1 truncate text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                                class="flex items-center gap-2 overflow-hidden text-sm"
                             >
-                                <span class="mr-2 text-[#FF4433]">Result:</span>
-
-                                <a
-                                    :href="'/' + result.short_code"
-                                    target="_blank"
-                                    class="hover:underline"
+                                <span
+                                    class="shrink-0 font-medium text-[#FF4433]"
+                                    >Original:</span
                                 >
-                                    {{ url }}/{{ result.short_code }}
-                                </a>
+                                <span
+                                    class="truncate text-[#52525b] dark:text-[#A1A09A]"
+                                >
+                                    {{ newShortUrl.long_url }}
+                                </span>
                             </div>
 
-                            <button
-                                type="button"
-                                @click="copyLink"
-                                class="rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200"
-                                :class="
-                                    copied
-                                        ? 'bg-[#FF4433] text-white shadow-[0_4px_12px_rgba(255,68,51,0.25)]'
-                                        : 'bg-white text-[#18181b] ring-1 ring-black/[0.1] hover:bg-neutral-50'
-                                "
+                            <div
+                                class="flex items-center justify-between gap-3 border-t border-[#FF4433]/10 pt-3"
                             >
-                                <span v-if="copied">✓ Copied</span>
-                                <span v-else>Copy</span>
-                            </button>
+                                <div
+                                    class="flex items-center gap-2 overflow-hidden text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                                >
+                                    <span class="shrink-0 text-[#FF4433]"
+                                        >Shortened:</span
+                                    >
+                                    <a
+                                        :href="'/' + newShortUrl.short_code"
+                                        target="_blank"
+                                        class="truncate hover:underline"
+                                    >
+                                        {{ url }}/{{ newShortUrl.short_code }}
+                                    </a>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    @click="copyToClipboard"
+                                    class="shrink-0 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-[#18181b] ring-1 ring-black/[0.1] transition-all duration-200 hover:bg-neutral-50"
+                                >
+                                    Copy
+                                </button>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- AUTH / GUEST MESSAGE -->
                     <div
                         v-if="!$page.props.auth.user"
-                        class="mt-4 flex flex-col items-start justify-between gap-4 rounded-xl border border-black/[0.08] bg-black/[0.04] p-4 text-left sm:mt-5 md:flex-row md:items-center dark:border-[#3E3E3A]/30 dark:bg-[#fffaed03]"
+                        class="mt-4 flex flex-col gap-4 rounded-xl border border-black/[0.08] bg-black/[0.04] p-4 text-left sm:mt-5 md:flex-row md:items-center md:justify-between dark:border-[#3E3E3A]/30 dark:bg-[#fffaed03]"
                     >
+                        <!-- Text Section -->
                         <div class="flex items-start gap-3">
                             <span class="shrink-0 text-base">⚠️</span>
                             <p
@@ -233,16 +271,46 @@ const copyLink = async () => {
                                 <strong
                                     class="text-[#b91c1c] dark:text-[#ff6b5c]"
                                     >expire in 24 hours</strong
-                                >
-                                and link tracking diagnostics will be
-                                unavailable.
+                                >, analytics will be limited, and you
+                                <strong
+                                    class="text-[#b91c1c] dark:text-[#ff6b5c]"
+                                    >cannot create custom aliases</strong
+                                >.
                             </p>
                         </div>
+
+                        <!-- Button Section -->
+                        <div class="flex md:justify-end">
+                            <Link
+                                :href="register()"
+                                class="text-xs font-semibold whitespace-nowrap text-[#FF4433] hover:underline"
+                            >
+                                Create Free Account →
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div
+                        v-else
+                        class="mt-4 flex flex-col items-start justify-between gap-4 rounded-xl border border-black/[0.08] bg-black/[0.04] p-4 text-left sm:mt-5 md:flex-row md:items-center dark:border-[#3E3E3A]/30 dark:bg-[#fffaed03]"
+                    >
+                        <div class="flex items-start gap-3">
+                            <span class="shrink-0 text-base">📊</span>
+                            <p
+                                class="text-xs leading-normal text-[#52525b] sm:text-sm dark:text-[#A1A09A]"
+                            >
+                                You can view link statistics in the
+                                <strong class="text-black dark:text-white"
+                                    >dashboard page</strong
+                                >.
+                            </p>
+                        </div>
+
                         <Link
-                            :href="register()"
-                            class="self-end text-xs font-semibold whitespace-nowrap text-[#FF4433] transition-all duration-200 hover:text-[#ff7c5c] hover:underline sm:text-sm md:self-auto"
+                            href="/dashboard"
+                            class="self-end text-xs font-semibold whitespace-nowrap text-[#FF4433] hover:underline"
                         >
-                            Create Free Account →
+                            Go to Dashboard →
                         </Link>
                     </div>
                 </div>
@@ -360,7 +428,7 @@ const copyLink = async () => {
                             <dd
                                 class="mt-1 text-2xl font-extrabold tracking-tight transition-transform duration-300 group-hover:scale-105 sm:mt-2 sm:text-4xl"
                             >
-                               {{ total_urls }}
+                                {{ total_urls }}
                             </dd>
                         </div>
                         <div
@@ -453,4 +521,21 @@ const copyLink = async () => {
             </footer>
         </div>
     </div>
+    <transition
+        enter-active-class="transition ease-out duration-200"
+        enter-from-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-2"
+    >
+        <div
+            v-if="showToast"
+            class="fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-xl bg-[#FF4433] px-6 py-3 text-white shadow-lg"
+        >
+            <Check :size="20" stroke-width="3" />
+
+            <span class="text-sm font-semibold">URL copied to clipboard!</span>
+        </div>
+    </transition>
 </template>
