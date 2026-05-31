@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ShortUrl;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class ShortUrlController extends Controller
@@ -18,6 +19,11 @@ class ShortUrlController extends Controller
     }
     function store(Request $request)
     {
+        $user = auth('sanctum')->user() ?? Auth::user();
+        if (!$user) {
+            $request->request->remove('short_code');
+        }
+
         $validated = $request->validate([
             'long_url' => 'required|url',
             'short_code' => 'nullable|min:3|max:10|unique:short_urls,short_code',
@@ -25,10 +31,19 @@ class ShortUrlController extends Controller
 
         $shortCode = $validated['short_code'] ?? Str::random(6);
 
-        $shortUrl = $request->user()->shortUrls()->create([
-            'long_url' => $validated['long_url'],
-            'short_code' => $shortCode,
-        ]);
+
+        if ($user) {
+            $shortUrl = $user->shortUrls()->create([
+                'long_url' => $validated['long_url'],
+                'short_code' => $shortCode,
+            ]);
+        } else {
+            $shortUrl = ShortUrl::create([
+                'long_url' => $validated['long_url'],
+                'short_code' => $shortCode,
+                'expires_at' => now()->addHours(24)
+            ]);
+        }
 
         if ($request->expectsJson()) {
             return response()->json([
@@ -78,23 +93,5 @@ class ShortUrlController extends Controller
         $shortUrl->increment('clicks');
 
         return redirect()->away($shortUrl->long_url);
-    }
-
-    function storePublic(Request $request)
-    {
-        $validated = $request->validate([
-            "long_url" => "required|url"
-        ]);
-        $shortCode = Str::random(6);
-        $shortUrl = ShortUrl::create([
-            'long_url' => $validated['long_url'],
-            'short_code' => $shortCode,
-            'expires_at' => now()->addHours(24),
-        ]);
-
-        return response()->json([
-            'message' => 'URL shortened successfully',
-            'data'    => $shortUrl
-        ], 201);
     }
 }
