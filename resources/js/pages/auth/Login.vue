@@ -23,7 +23,10 @@ defineProps<{
 <template>
     <Head title="Log in" />
 
-    <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
+    <div
+        v-if="status"
+        class="mb-4 text-center text-sm font-medium text-green-600"
+    >
         {{ status }}
     </div>
 
@@ -35,7 +38,11 @@ defineProps<{
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <label for="email" class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]">Email address</label>
+                <label
+                    for="email"
+                    class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                    >Email address</label
+                >
                 <input
                     id="email"
                     type="email"
@@ -45,15 +52,23 @@ defineProps<{
                     tabindex="1"
                     autocomplete="email"
                     placeholder="email@example.com"
-                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] outline-none transition-all duration-200 focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
+                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] transition-all duration-200 outline-none focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
-                    <label for="password" class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]">Password</label>
-                    <TextLink v-if="canResetPassword" :href="request()" class="text-sm hover:text-[#FF4433]" >
+                    <label
+                        for="password"
+                        class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                        >Password</label
+                    >
+                    <TextLink
+                        v-if="canResetPassword"
+                        :href="request()"
+                        class="text-sm hover:text-[#FF4433]"
+                    >
                         Forgot password?
                     </TextLink>
                 </div>
@@ -64,7 +79,7 @@ defineProps<{
                     tabindex="2"
                     autocomplete="current-password"
                     placeholder="••••••••"
-                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] outline-none transition-all duration-200 focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
+                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] transition-all duration-200 outline-none focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
                 />
                 <InputError :message="errors.password" />
             </div>
@@ -78,11 +93,27 @@ defineProps<{
                 <span v-if="processing" class="mr-2">Loading...</span>
                 Log in
             </button>
+            <a
+                href="/auth/google/redirect"
+                class="flex items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+                <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    class="h-5 w-5"
+                    alt="Google"
+                />
+                Continue with Google
+            </a>
         </div>
 
         <div class="text-center text-sm text-[#52525b] dark:text-[#A1A09A]">
             Don't have an account?
-            <TextLink :href="register()" class="font-semibold text-[#FF4433] hover:underline" tabindex="6">Sign up</TextLink>
+            <TextLink
+                :href="register()"
+                class="font-semibold text-[#FF4433] hover:underline"
+                tabindex="6"
+                >Sign up</TextLink
+            >
         </div>
     </Form>
 </template>

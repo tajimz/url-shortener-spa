@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ShortUrlController;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,3 +19,5 @@ Route::get('/{short_code}', [ShortUrlController::class, 'redirect']);
 
 Route::post('/urls', [ShortUrlController::class, 'store']);
 Route::delete('/urls/{id}', [ShortUrlController::class, 'destroy']);
+Route::get('/auth/google/redirect', [SocialController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [SocialController::class, 'callback']);

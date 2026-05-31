@@ -29,7 +29,11 @@ defineOptions({
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <label for="name" class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]">Name</label>
+                <label
+                    for="name"
+                    class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                    >Name</label
+                >
                 <input
                     id="name"
                     type="text"
@@ -39,13 +43,17 @@ defineOptions({
                     tabindex="1"
                     autocomplete="name"
                     placeholder="Full name"
-                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] outline-none transition-all duration-200 focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
+                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] transition-all duration-200 outline-none focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
                 />
                 <InputError :message="errors.name" />
             </div>
 
             <div class="grid gap-2">
-                <label for="email" class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]">Email address</label>
+                <label
+                    for="email"
+                    class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                    >Email address</label
+                >
                 <input
                     id="email"
                     type="email"
@@ -54,13 +62,17 @@ defineOptions({
                     tabindex="2"
                     autocomplete="email"
                     placeholder="email@example.com"
-                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] outline-none transition-all duration-200 focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
+                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] transition-all duration-200 outline-none focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
                 />
                 <InputError :message="errors.email" />
             </div>
 
             <div class="grid gap-2">
-                <label for="password" class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]">Password</label>
+                <label
+                    for="password"
+                    class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                    >Password</label
+                >
                 <PasswordInput
                     id="password"
                     name="password"
@@ -69,13 +81,17 @@ defineOptions({
                     autocomplete="new-password"
                     placeholder="••••••••"
                     :passwordrules="passwordRules"
-                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] outline-none transition-all duration-200 focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
+                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] transition-all duration-200 outline-none focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="grid gap-2">
-                <label for="password_confirmation" class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]">Confirm password</label>
+                <label
+                    for="password_confirmation"
+                    class="text-sm font-medium text-[#18181b] dark:text-[#EDEDEC]"
+                    >Confirm password</label
+                >
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
@@ -84,7 +100,7 @@ defineOptions({
                     autocomplete="new-password"
                     placeholder="••••••••"
                     :passwordrules="passwordRules"
-                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] outline-none transition-all duration-200 focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
+                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] transition-all duration-200 outline-none focus:border-[#FF4433] focus:ring-4 focus:ring-[#FF4433]/10 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"
                 />
                 <InputError :message="errors.password_confirmation" />
             </div>
@@ -98,11 +114,27 @@ defineOptions({
                 <span v-if="processing" class="mr-2">Loading...</span>
                 Create account
             </button>
+            <a
+                href="/auth/google/redirect"
+                class="flex items-center justify-center gap-3 rounded-xl border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+                <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    class="h-5 w-5"
+                    alt="Google"
+                />
+                Continue with Google
+            </a>
         </div>
 
         <div class="text-center text-sm text-[#52525b] dark:text-[#A1A09A]">
             Already have an account?
-            <TextLink :href="login()" class="font-semibold text-[#FF4433] hover:underline" tabindex="6">Log in</TextLink>
+            <TextLink
+                :href="login()"
+                class="font-semibold text-[#FF4433] hover:underline"
+                tabindex="6"
+                >Log in</TextLink
+            >
         </div>
     </Form>
 </template>
