@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ShortUrlController extends Controller
 {
@@ -94,9 +95,44 @@ class ShortUrlController extends Controller
         if ($shortUrl->expires_at && $shortUrl->expires_at->isPast()) {
             abort(404);
         }
+        if ($shortUrl->password) {
+            return redirect("/{$shortUrl->short_code}/password");
+        }
 
         $shortUrl->increment('clicks');
 
         return redirect()->away($shortUrl->long_url);
+    }
+
+    function showPasswordForm($short_code)
+    {
+        $shortUrl = $shortUrl = ShortUrl::where('short_code', $short_code)->firstOrFail();
+
+        return Inertia::render('shorturls/VerifyPassword', [
+            'shortUrl' => $shortUrl
+        ]);
+    }
+
+    function verifyPassword(Request $request, $short_code)
+    {
+        $request->validate([
+            'password' => 'required|string'
+        ]);
+
+        $shortUrl = $shortUrl = ShortUrl::where('short_code', $short_code)->firstOrFail();
+
+        if ($shortUrl->expires_at && $shortUrl->expires_at->isPast()) {
+            abort(404);
+        }
+
+        if (!Hash::check($request->password, $shortUrl->password)) {
+            return back()->withErrors([
+                'password' => 'The password is not correct'
+            ]);
+        }
+
+        $shortUrl->increment('clicks');
+
+        return Inertia::location($shortUrl->long_url);
     }
 }

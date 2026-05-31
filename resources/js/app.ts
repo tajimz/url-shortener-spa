@@ -19,6 +19,8 @@ createInertiaApp({
                 return [AppLayout, SettingsLayout];
             case name.startsWith('errors/'):
                 return null;
+            case name === 'shorturls/VerifyPassword':
+                return null;
             default:
                 return AppLayout;
         }

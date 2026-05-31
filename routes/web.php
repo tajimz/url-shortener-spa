@@ -21,3 +21,6 @@ Route::post('/urls', [ShortUrlController::class, 'store']);
 Route::delete('/urls/{id}', [ShortUrlController::class, 'destroy']);
 Route::get('/auth/google/redirect', [SocialController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [SocialController::class, 'callback']);
+
+Route::get('/{short_code}/password', [ShortUrlController::class, 'showPasswordForm'])->name('shorturls.password.form');
+Route::post('/{short_code}/password', [ShortUrlController::class, 'verifyPassword'])->name('shorturls.password.verify')->middleware('throttle:5,1');;
