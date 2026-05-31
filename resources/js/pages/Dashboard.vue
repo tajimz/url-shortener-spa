@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { dashboard } from '@/routes';
+import { Pencil } from 'lucide-vue-next';
 
 defineOptions({
     layout: {
         breadcrumbs: [{ title: 'Dashboard', href: dashboard() }],
     },
 });
+
+defineProps({
+    urls: Array,
+    total_urls: Number,
+    total_clicks: Number,
+});
+
+const domain = window.location.hostname;
 </script>
 
 <template>
@@ -43,7 +52,7 @@ defineOptions({
                     Total Links
                 </p>
                 <h2 class="mt-3 text-5xl font-extrabold tracking-tighter">
-                    1,248
+                    {{ total_urls }}
                 </h2>
             </div>
             <div
@@ -55,7 +64,7 @@ defineOptions({
                     Total Views
                 </p>
                 <h2 class="mt-3 text-5xl font-extrabold tracking-tighter">
-                    84.2K
+                    {{ total_clicks }}
                 </h2>
             </div>
         </div>
@@ -71,27 +80,27 @@ defineOptions({
             </div>
 
             <div class="overflow-y-auto">
-                <div
-                    v-for="i in 8"
-                    :key="i"
+                <Link
+                    v-for="url in urls"
+                    :key="url.id"
+                    :href="`/urls/${url.id}`"
                     class="group flex items-center justify-between border-b border-black/[0.03] px-8 py-6 transition-colors hover:bg-neutral-50/50 dark:border-[#3E3E3A]/20 dark:hover:bg-[#1f1f1d]"
                 >
                     <div class="flex flex-col gap-1.5">
                         <span
                             class="font-mono text-sm font-medium tracking-tight text-[#FF4433]"
-                            >url.sh/abc-{{ i }}</span
+                            >{{ domain }}/{{ url.short_code }}</span
                         >
-                        <span class="max-w-md truncate text-sm text-neutral-500"
-                            >https://long-url-destination-example.com/{{
-                                i
-                            }}</span
+                        <span
+                            class="max-w-md truncate text-sm text-neutral-500"
+                            >{{ url.long_url }}</span
                         >
                     </div>
 
                     <div class="flex items-center gap-8">
                         <div class="text-right">
                             <p class="text-2xl font-bold tracking-tight">
-                                1,240
+                                {{ url.clicks }}
                             </p>
                             <p
                                 class="text-[10px] tracking-widest text-neutral-400 uppercase"
@@ -99,26 +108,13 @@ defineOptions({
                                 Views
                             </p>
                         </div>
-                        <button
-                            class="p-2 text-neutral-300 transition-colors hover:text-[#FF4433]"
+                        <Pencil
+                            class=" text-neutral-300 transition-colors hover:text-[#FF4433]"
                         >
-                            <!-- Simple Edit Icon Placeholder -->
-                            <svg
-                                class="h-5 w-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                                ></path>
-                            </svg>
-                        </button>
+                           
+                        </Pencil>
                     </div>
-                </div>
+                </Link>
             </div>
         </div>
     </div>
