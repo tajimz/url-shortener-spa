@@ -30,10 +30,15 @@ class ShortUrlController extends Controller
             'short_code' => $shortCode,
         ]);
 
-        return response()->json([
-            'message' => 'URL shortened successfully',
-            'data' => $shortUrl
-        ], 201);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'URL shortened successfully',
+                'data' => $shortUrl
+            ], 201);
+        }
+
+        return back()->with('success', 'URL shortened successfully!')
+            ->with('short_url', $shortUrl);
     }
 
     public function destroy(Request $request, $id)
