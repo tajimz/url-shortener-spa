@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { dashboard } from '@/routes';
-import { Pencil } from 'lucide-vue-next';
+import { Check, Pencil } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 defineOptions({
     layout: {
@@ -16,6 +17,16 @@ defineProps({
 });
 
 const domain = window.location.hostname;
+
+const showToast = ref(false);
+
+const copyToClipboard = (shortCode: string) => {
+    const fullUrl = `${domain}/${shortCode}`;
+    navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast.value = true;
+        setTimeout(() => (showToast.value = false), 2000);
+    });
+};
 </script>
 
 <template>
@@ -70,6 +81,7 @@ const domain = window.location.hostname;
         </div>
 
         <!-- Modern List View -->
+
         <div
             class="flex-1 overflow-hidden rounded-3xl border border-black/[0.06] bg-white shadow-sm dark:border-[#3E3E3A]/40 dark:bg-[#161615]"
         >
@@ -78,12 +90,20 @@ const domain = window.location.hostname;
             >
                 <h3 class="text-lg font-bold">Active Links</h3>
             </div>
-
-            <div class="overflow-y-auto">
-                <Link
+            <div
+                v-if="urls.length === 0"
+                class="p-12 text-center text-neutral-500"
+            >
+                <p>No links created yet.</p>
+                <Link href="/create" class="text-[#FF4433] underline"
+                    >Create your first one</Link
+                >
+            </div>
+            <div v-else class="overflow-y-auto">
+                <div
                     v-for="url in urls"
                     :key="url.id"
-                    :href="`/urls/${url.id}`"
+                    @click="copyToClipboard(url.short_code)"
                     class="group flex items-center justify-between border-b border-black/[0.03] px-8 py-6 transition-colors hover:bg-neutral-50/50 dark:border-[#3E3E3A]/20 dark:hover:bg-[#1f1f1d]"
                 >
                     <div class="flex flex-col gap-1.5">
@@ -108,14 +128,31 @@ const domain = window.location.hostname;
                                 Views
                             </p>
                         </div>
-                        <Pencil
-                            class=" text-neutral-300 transition-colors hover:text-[#FF4433]"
-                        >
-                           
-                        </Pencil>
+                        <Link :href="`/urls/${url.id}`">
+                            <Pencil
+                                class="text-neutral-300 transition-colors hover:text-[#FF4433]"
+                            />
+                        </Link>
                     </div>
-                </Link>
+                </div>
             </div>
         </div>
     </div>
+    <transition
+        enter-active-class="transition ease-out duration-200"
+        enter-from-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition ease-in duration-150"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-2"
+    >
+        <div
+            v-if="showToast"
+            class="fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-xl bg-[#FF4433] px-6 py-3 text-white shadow-lg"
+        >
+            <Check :size="20" stroke-width="3" />
+
+            <span class="text-sm font-semibold">URL copied to clipboard!</span>
+        </div>
+    </transition>
 </template>
