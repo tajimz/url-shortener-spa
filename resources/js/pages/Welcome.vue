@@ -8,6 +8,12 @@ const longUrl = ref('');
 const result = ref(null);
 const error = ref('');
 
+defineProps({
+    total_urls:Number,
+    total_clicks:Number,
+    total_users:Number
+});
+
 const submit = async () => {
     try {
         const response = await axios.post('/api/public/shorten', {
@@ -354,7 +360,7 @@ const copyLink = async () => {
                             <dd
                                 class="mt-1 text-2xl font-extrabold tracking-tight transition-transform duration-300 group-hover:scale-105 sm:mt-2 sm:text-4xl"
                             >
-                                12M+
+                               {{ total_urls }}
                             </dd>
                         </div>
                         <div
@@ -368,7 +374,7 @@ const copyLink = async () => {
                             <dd
                                 class="mt-1 text-2xl font-extrabold tracking-tight transition-transform duration-300 group-hover:scale-105 sm:mt-2 sm:text-4xl"
                             >
-                                840M+
+                                {{ total_clicks }}
                             </dd>
                         </div>
                         <div
@@ -382,7 +388,7 @@ const copyLink = async () => {
                             <dd
                                 class="mt-1 text-2xl font-extrabold tracking-tight transition-transform duration-300 group-hover:scale-105 sm:mt-2 sm:text-4xl"
                             >
-                                140K+
+                                {{ total_users }}
                             </dd>
                         </div>
                         <div
