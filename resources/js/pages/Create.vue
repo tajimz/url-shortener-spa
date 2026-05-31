@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { Check } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
@@ -23,7 +23,6 @@ const submit = () => {
     });
 };
 const page = usePage();
-const successMessage = computed(() => page.props.flash.success);
 const newShortUrl = computed(() => page.props.flash.short_url);
 
 const showToast = ref(false);
