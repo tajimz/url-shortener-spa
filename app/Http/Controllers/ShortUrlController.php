@@ -27,7 +27,7 @@ class ShortUrlController extends Controller
 
         $validated = $request->validate([
             'long_url' => 'required|url',
-            'short_code' => ['nullable', 'min:3', 'max:10', 'unique:short_urls,short_code', new NotARoute(),],
+            'short_code' => ['nullable', 'min:3', 'max:20', 'unique:short_urls,short_code', new NotARoute(),],
         ]);
 
         $shortCode = $validated['short_code'] ?? Str::random(6);
