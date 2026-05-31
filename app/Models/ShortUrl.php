@@ -9,7 +9,7 @@ class ShortUrl extends Model
 {
     //
     use HasFactory;
-    protected $fillable = ['long_url', 'short_code', 'clicks', 'expires_at'];
+    protected $fillable = ['long_url', 'short_code', 'clicks', 'expires_at', 'password'];
     protected $casts = [
         'expires_at' => 'datetime',
     ];

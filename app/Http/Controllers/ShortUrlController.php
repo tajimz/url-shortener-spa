@@ -6,6 +6,7 @@ use App\Models\ShortUrl;
 use App\Rules\NotARoute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class ShortUrlController extends Controller
@@ -23,10 +24,12 @@ class ShortUrlController extends Controller
         $user = auth('sanctum')->user() ?? Auth::user();
         if (!$user) {
             $request->request->remove('short_code');
+            $request->request->remove('password');
         }
 
         $validated = $request->validate([
             'long_url' => 'required|url',
+            'password' => ['nullable', 'string', 'min:4', 'max:50', 'regex:/^[A-Za-z0-9@#$_\-]+$/'],
             'short_code' => ['nullable', 'min:3', 'max:20', 'unique:short_urls,short_code', new NotARoute(),],
         ]);
 
@@ -37,6 +40,7 @@ class ShortUrlController extends Controller
             $shortUrl = $user->shortUrls()->create([
                 'long_url' => $validated['long_url'],
                 'short_code' => $shortCode,
+                'password' => isset($validated['password']) ? Hash::make($validated['password']) : null,
             ]);
         } else {
             $shortUrl = ShortUrl::create([

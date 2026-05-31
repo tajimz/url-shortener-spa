@@ -14,13 +14,14 @@ defineProps({
 const form = useForm({
     long_url: '',
     short_code: '',
+    password: '',
 });
 
 const submit = () => {
     form.post('/urls', {
         preserveScroll: true,
         onSuccess: () => {
-            form.reset('long_url', 'short_code');
+            form.reset('long_url', 'short_code', 'password');
         },
     });
 };
@@ -149,43 +150,37 @@ const copyToClipboard = () => {
                 <div
                     class="mx-auto mt-8 max-w-3xl rounded-2xl border border-black/[0.12] bg-white/80 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-all duration-300 focus-within:border-[#FF4433]/40 focus-within:ring-4 focus-within:ring-[#FF4433]/5 sm:mt-12 sm:p-5 dark:border-[#3E3E3A]/60 dark:bg-[#111110] dark:shadow-[0_15px_50px_rgba(0,0,0,0.4)] dark:focus-within:border-[#FF4433]/40"
                 >
-                    <form
-                        @submit.prevent="submit"
-                        class="flex flex-col gap-3.5"
-                    >
-                        <div class="flex flex-col gap-3.5 sm:flex-row">
-                            <!-- LONG URL -->
-                            <div class="group relative w-full flex-[3]">
-                                <div
-                                    class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-base transition-transform duration-200 group-focus-within:scale-110"
-                                >
-                                    🔗
-                                </div>
-
-                                <input
-                                    v-model="form.long_url"
-                                    required
-                                    type="url"
-                                    placeholder="Paste your long link here..."
-                                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 py-3.5 pr-4 pl-12 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c]"
-                                />
-                                <div
-                                    v-if="form.errors.long_url"
-                                    class="mt-1 text-xs text-red-500"
-                                >
-                                    {{ form.errors.long_url }}
-                                </div>
-                            </div>
-
-                            <!-- ALIAS -->
+                    <form @submit.prevent="submit" class="flex flex-col gap-6">
+                        <div class="relative w-full">
                             <div
-                                v-if="$page.props.auth.user"
-                                class="relative w-full flex-[1]"
+                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-base transition-transform duration-200 group-focus-within:scale-110"
                             >
+                                🔗
+                            </div>
+                            <input
+                                v-model="form.long_url"
+                                required
+                                type="url"
+                                placeholder="Paste your long link here..."
+                                class="w-full rounded-xl border border-black/[0.14] bg-white/70 py-3.5 pr-4 pl-12 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c]"
+                            />
+                            <div
+                                v-if="form.errors.long_url"
+                                class="mt-1 text-xs text-red-500"
+                            >
+                                {{ form.errors.long_url }}
+                            </div>
+                        </div>
+
+                        <div
+                            v-if="$page.props.auth.user"
+                            class="grid gap-4 sm:grid-cols-2"
+                        >
+                            <div class="relative w-full">
                                 <input
                                     v-model="form.short_code"
                                     type="text"
-                                    placeholder="Alias (optional)"
+                                    placeholder="Custom alias (optional)"
                                     class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c]"
                                 />
                                 <div
@@ -193,6 +188,21 @@ const copyToClipboard = () => {
                                     class="mt-1 text-xs text-red-500"
                                 >
                                     {{ form.errors.short_code }}
+                                </div>
+                            </div>
+
+                            <div class="relative w-full">
+                                <input
+                                    v-model="form.password"
+                                    type="password"
+                                    placeholder="Set password (optional)"
+                                    class="w-full rounded-xl border border-black/[0.14] bg-white/70 px-4 py-3.5 text-base text-[#18181b] placeholder-[#88888d] transition-all duration-200 outline-none focus:border-[#FF4433] focus:bg-white sm:py-4 dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:placeholder-[#706f6c]"
+                                />
+                                <div
+                                    v-if="form.errors.password"
+                                    class="mt-1 text-xs text-red-500"
+                                >
+                                    {{ form.errors.password }}
                                 </div>
                             </div>
                         </div>
@@ -270,11 +280,18 @@ const copyToClipboard = () => {
                                 You are not logged in. Your links will
                                 <strong
                                     class="text-[#b91c1c] dark:text-[#ff6b5c]"
-                                    >expire in 24 hours</strong
-                                >, analytics will be limited, and you
+                                >
+                                    expire in 24 hours </strong
+                                >, analytics will be limited, you
                                 <strong
                                     class="text-[#b91c1c] dark:text-[#ff6b5c]"
-                                    >cannot create custom aliases</strong
+                                >
+                                    cannot create custom aliases </strong
+                                >, and you
+                                <strong
+                                    class="text-[#b91c1c] dark:text-[#ff6b5c]"
+                                >
+                                    cannot set a password for routes </strong
                                 >.
                             </p>
                         </div>

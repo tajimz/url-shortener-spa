@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { dashboard } from '@/routes';
-import { Check, Trash2 } from 'lucide-vue-next'; // Removed unused Pencil
+import { Check, Lock, Trash2 } from 'lucide-vue-next'; // Removed unused Pencil
 import { ref } from 'vue';
 
 defineOptions({
@@ -129,17 +129,25 @@ const deleteUrl = (id: number) => {
                     @click="copyToClipboard(url.short_code)"
                     class="group flex cursor-pointer items-center justify-between border-b border-black/[0.06] px-8 py-6 transition-colors hover:bg-neutral-50 dark:border-[#3E3E3A]/20 dark:hover:bg-[#1f1f1d]"
                 >
-                    <div class="flex flex-col gap-1.5">
-                        <span
-                            class="font-mono text-sm font-medium tracking-tight text-[#FF4433]"
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="flex w-6 shrink-0 justify-center text-neutral-400"
                         >
-                            {{ domain }}/{{ url.short_code }}
-                        </span>
-                        <span
-                            class="max-w-md truncate text-sm text-neutral-500 dark:text-[#A1A09A]"
-                        >
-                            {{ url.long_url }}
-                        </span>
+                            <Lock v-if="url.password" :size="16" />
+                        </div>
+
+                        <div class="flex flex-col gap-1.5">
+                            <span
+                                class="font-mono text-sm font-medium tracking-tight text-[#FF4433]"
+                            >
+                                {{ domain }}/{{ url.short_code }}
+                            </span>
+                            <span
+                                class="max-w-md truncate text-sm text-neutral-500 dark:text-[#A1A09A]"
+                            >
+                                {{ url.long_url }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="flex items-center gap-8">

@@ -13,12 +13,13 @@ const url = window.location.hostname;
 const form = useForm({
     long_url: '',
     short_code: '',
+    password: '',
 });
 const submit = () => {
     form.post('/urls', {
         preserveScroll: true,
         onSuccess: () => {
-            form.reset('long_url', 'short_code');
+            form.reset('long_url', 'short_code', 'password');
         },
     });
 };
@@ -42,9 +43,13 @@ const copyToClipboard = () => {
     <Head title="Create New Link" />
 
     <!-- Warmer base background consistent with Dashboard -->
-    <div class="min-h-screen bg-[#f9f9f8] p-6 text-[#18181b] dark:bg-[#0d0d0c] dark:text-[#EDEDEC] sm:p-12">
+    <div
+        class="min-h-screen bg-[#f9f9f8] p-6 text-[#18181b] sm:p-12 dark:bg-[#0d0d0c] dark:text-[#EDEDEC]"
+    >
         <div class="max-w-2xl">
-            <h1 class="text-3xl font-extrabold tracking-tight">Create New Link</h1>
+            <h1 class="text-3xl font-extrabold tracking-tight">
+                Create New Link
+            </h1>
             <p class="mt-1 text-sm text-[#52525b] dark:text-[#A1A09A]">
                 Generate a short, trackable URL for your destination.
             </p>
@@ -66,19 +71,26 @@ const copyToClipboard = () => {
                         class="rounded-xl border border-black/[0.08] bg-white px-4 py-3 outline-none focus:border-[#FF4433] dark:border-[#3E3E3A]/40 dark:bg-[#1f1f1d] dark:focus:border-[#FF4433]"
                     />
                 </div>
-                <div v-if="form.errors.long_url" class="mt-1 text-xs text-red-500">
+                <div
+                    v-if="form.errors.long_url"
+                    class="mt-1 text-xs text-red-500"
+                >
                     {{ form.errors.long_url }}
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-semibold">
                         Custom Alias
-                        <span class="font-normal text-neutral-400">(Optional)</span>
+                        <span class="font-normal text-neutral-400"
+                            >(Optional)</span
+                        >
                     </label>
                     <div
                         class="flex items-center gap-2 rounded-xl border border-black/[0.08] bg-white px-4 py-3 focus-within:border-[#FF4433] dark:border-[#3E3E3A]/40 dark:bg-[#1f1f1d] dark:focus-within:border-[#FF4433]"
                     >
-                        <span class="font-mono text-sm whitespace-nowrap text-neutral-400 dark:text-[#A1A09A]">
+                        <span
+                            class="font-mono text-sm whitespace-nowrap text-neutral-400 dark:text-[#A1A09A]"
+                        >
                             {{ url }}/
                         </span>
                         <input
@@ -89,8 +101,33 @@ const copyToClipboard = () => {
                             class="w-full bg-transparent text-sm outline-none"
                         />
                     </div>
-                    <div v-if="form.errors.short_code" class="mt-1 text-xs text-red-500">
+                    <div
+                        v-if="form.errors.short_code"
+                        class="mt-1 text-xs text-red-500"
+                    >
                         {{ form.errors.short_code }}
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-semibold">
+                            Password
+                            <span class="font-normal text-neutral-400"
+                                >(Optional)</span
+                            >
+                        </label>
+                        <input
+                            @input="form.clearErrors()"
+                            v-model="form.password"
+                            type="text"
+                            placeholder="Optional Password"
+                            class="rounded-xl border border-black/[0.08] bg-white px-4 py-3 outline-none focus:border-[#FF4433] dark:border-[#3E3E3A]/40 dark:bg-[#1f1f1d] dark:focus:border-[#FF4433]"
+                        />
+                    </div>
+                    <div
+                        v-if="form.errors.password"
+                        class="mt-1 text-xs text-red-500"
+                    >
+                        {{ form.errors.password }}
                     </div>
                 </div>
 
@@ -106,16 +143,22 @@ const copyToClipboard = () => {
 
         <div
             v-if="!form.isDirty && newShortUrl"
-            class="mt-8 max-w-2xl rounded-3xl border border-black/[0.08] bg-white/50 p-8 backdrop-blur-sm shadow-sm dark:border-[#3E3E3A]/40 dark:bg-[#161615]"
+            class="mt-8 max-w-2xl rounded-3xl border border-black/[0.08] bg-white/50 p-8 shadow-sm backdrop-blur-sm dark:border-[#3E3E3A]/40 dark:bg-[#161615]"
         >
             <h3 class="mb-4 text-sm font-semibold">Result</h3>
 
             <div class="mb-4 text-xs text-neutral-500">
-                <span class="mt-1 block max-w-full truncate italic">{{ newShortUrl.long_url }}</span>
+                <span class="mt-1 block max-w-full truncate italic">{{
+                    newShortUrl.long_url
+                }}</span>
             </div>
 
-            <div class="flex items-center justify-between gap-4 rounded-xl bg-neutral-50 p-4 dark:bg-[#1f1f1d]">
-                <code class="truncate font-mono text-[#FF4433]">{{ url }}/{{ newShortUrl.short_code }}</code>
+            <div
+                class="flex items-center justify-between gap-4 rounded-xl bg-neutral-50 p-4 dark:bg-[#1f1f1d]"
+            >
+                <code class="truncate font-mono text-[#FF4433]"
+                    >{{ url }}/{{ newShortUrl.short_code }}</code
+                >
                 <button
                     @click="copyToClipboard"
                     class="text-xs font-semibold text-neutral-500 uppercase transition-colors hover:text-[#FF4433]"
