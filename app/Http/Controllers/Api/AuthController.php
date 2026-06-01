@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -46,10 +47,12 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
+        event(new Registered($user));
+
         $token = $user->createToken($validated['device_name'])->plainTextToken;
 
         return response()->json([
-            'message' => 'Account created successfully',
+            'message' => 'Account created successfully. Please verify your email',
             'token' => $token,
             'user' => $user
         ], 201);
