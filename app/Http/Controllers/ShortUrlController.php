@@ -107,6 +107,10 @@ class ShortUrlController extends Controller
     function showPasswordForm($short_code)
     {
         $shortUrl = $shortUrl = ShortUrl::where('short_code', $short_code)->firstOrFail();
+        if (!$shortUrl->password) {
+
+            return $this->redirect($short_code);
+        }
 
         return Inertia::render('shorturls/VerifyPassword', [
             'shortUrl' => $shortUrl

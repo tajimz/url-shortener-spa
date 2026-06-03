@@ -13,6 +13,17 @@ class ShortUrl extends Model
     protected $casts = [
         'expires_at' => 'datetime',
     ];
+    protected $hidden = [
+        'password',
+    ];
+    protected $appends = [
+        'has_password',
+    ];
+    public function getHasPasswordAttribute()
+    {
+        return !empty($this->password);
+    }
+    
     public function user()
     {
         return $this->belongsTo(User::class);

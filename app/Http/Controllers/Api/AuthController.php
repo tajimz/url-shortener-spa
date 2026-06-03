@@ -29,7 +29,11 @@ class AuthController extends Controller
             ], 401);
         }
         $token = $user->createToken($request->device_name)->plainTextToken;
-        return response()->json(['token' => $token]);
+        return response()->json([
+            'message' => 'Logged In successfully',
+            'token' => $token,
+            'user' => $user
+        ], 201);
     }
 
     public function register(Request $request)
@@ -72,7 +76,7 @@ class AuthController extends Controller
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
-                'message' => 'Email already verified.'
+                'message' => "You are verified already, Click I've verified button to proceed"
             ], 400);
         }
 

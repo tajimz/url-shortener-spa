@@ -133,7 +133,7 @@ const deleteUrl = (id: number) => {
                         <div
                             class="flex w-6 shrink-0 justify-center text-neutral-400"
                         >
-                            <Lock v-if="url.password" :size="16" />
+                            <Lock v-if="url.has_password" :size="16" />
                         </div>
 
                         <div class="flex flex-col gap-1.5">
