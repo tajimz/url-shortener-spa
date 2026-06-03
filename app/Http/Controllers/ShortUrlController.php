@@ -16,9 +16,23 @@ class ShortUrlController extends Controller
 
     function index(Request $request)
     {
-        return response()->json([
-            'data' => $request->user()->shortUrls()->latest()->get()
+        $user = $request->user();
+
+        $urls = $user->shortUrls()->latest()->get();
+
+        if ($request->expectsJson()){
+            return response()->json([
+                'data' => $urls,
+                'total_urls' => $urls->count(),
+                'total_clicks' => $urls->sum('clicks'),
+            ]);
+        }
+        return Inertia::render('Dashboard', [
+            'total_urls' => $urls->count(),
+            'total_clicks' => $urls->sum('clicks'),
+            'urls' => $urls,
         ]);
+
     }
     function store(Request $request)
     {
