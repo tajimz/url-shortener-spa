@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     //
+    function index(Request $request){
+        return $request->user();
+    }
     function login(Request $request)
     {
         $request->validate([
