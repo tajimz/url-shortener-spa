@@ -93,7 +93,7 @@ const user = computed(() => page.props.auth.user);
                         type="email"
                         name="email"
                         :default-value="user.email"
-                        required
+                        disabled
                         autocomplete="username"
                         placeholder="Email address"
                         class="border-black/[0.14] bg-white/70 focus:border-[#FF4433] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC]"

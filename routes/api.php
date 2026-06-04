@@ -17,6 +17,7 @@ Route::post('/urls', [ShortUrlController::class, 'store']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::patch('/me', [AuthController::class, 'update']);
     Route::post('/verification/send', [AuthController::class, 'resendEmailVerification']);
     Route::get('/me', function (Request $request) {
         return $request->user();

@@ -86,4 +86,28 @@ class AuthController extends Controller
             'message' => 'Verification link sent!'
         ]);
     }
+
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'old_password' => ['nullable', 'current_password'],
+            'new_password' => ['nullable', 'string', 'min:8'],
+        ]);
+
+        $user->name = $validated['name'];
+
+        if ($request->filled('new_password')) {
+            $user->password = Hash::make($validated['new_password']);
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'data' => $user
+        ]);
+    }
 }
