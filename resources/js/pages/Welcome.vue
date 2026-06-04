@@ -26,7 +26,7 @@ const submit = () => {
     });
 };
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-const androidAppURL = import.meta.env.ANDROID_APP_URL || 'https://example.com';
+const androidAppURL = import.meta.env.VITE_ANDROID_APP_URL || 'https://example.com';
 
 const page = usePage();
 const newShortUrl = computed(() => page.props.flash.short_url);
