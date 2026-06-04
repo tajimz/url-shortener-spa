@@ -25,6 +25,8 @@ const submit = () => {
         },
     });
 };
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const androidAppURL = import.meta.env.ANDROID_APP_URL || 'https://example.com';
 
 const page = usePage();
 const newShortUrl = computed(() => page.props.flash.short_url);
@@ -43,7 +45,7 @@ const copyToClipboard = () => {
 </script>
 
 <template>
-    <Head title="Premium URL Shortener" />
+    <Head title="URL Shortener" />
 
     <div
         class="relative min-h-screen overflow-x-hidden bg-[#f4f4f5] text-[#18181b] antialiased selection:bg-[#FF4433]/20 selection:text-[#FF4433] dark:bg-[#0d0d0c] dark:text-[#EDEDEC] dark:selection:bg-[#FF4433]/30 dark:selection:text-white"
@@ -79,12 +81,12 @@ const copyToClipboard = () => {
                         >
                             ⚡
                         </span>
-                        <span
-                            >URL<span
-                                class="text-[#FF4433] transition-colors duration-300 group-hover:text-[#ff7c5c]"
-                                >Shortener</span
-                            ></span
-                        >
+                        <span>
+                            {{ appName.slice(0, 4)
+                            }}<span class="text-[#FF4433]">{{
+                                appName.slice(4)
+                            }}</span>
+                        </span>
                     </div>
 
                     <nav class="flex items-center gap-3 sm:gap-5">
@@ -415,7 +417,7 @@ const copyToClipboard = () => {
                     </p>
                     <div class="flex justify-center">
                         <a
-                            href="https://example.com"
+                            :href="androidAppURL"
                             target="_blank"
                             class="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#FF4433] px-6 py-3 text-base font-semibold text-white shadow-[0_4px_12px_rgba(255,68,51,0.2)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e63222] hover:shadow-[0_6px_20px_rgba(255,68,51,0.3)] active:translate-y-0 sm:w-auto sm:px-7 sm:py-3.5"
                         >
@@ -502,7 +504,7 @@ const copyToClipboard = () => {
                 >
                     <!-- Left Side: Copyright & Brand Ownership -->
                     <div class="space-y-1 text-center md:text-left">
-                        <p>&copy; 2026 URLShortener. All rights reserved.</p>
+                        <p>&copy; 2026 {{ appName }}. All rights reserved.</p>
                         <p class="inline-flex items-center gap-1">
                             A concern of
                             <a
