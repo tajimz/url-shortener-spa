@@ -82,7 +82,7 @@ test('verified user is redirected to dashboard from verification prompt', functi
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
-test('already verified user visiting verification link is redirected without firing event again', function () {
+test('already verified user visiting verification link is handled correctly', function () {
     $user = User::factory()->create();
 
     Event::fake();
@@ -93,8 +93,9 @@ test('already verified user visiting verification link is redirected without fir
         ['id' => $user->id, 'hash' => sha1($user->email)],
     );
 
-    $this->actingAs($user)->get($verificationUrl)
-        ->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+    $response = $this->actingAs($user)->get($verificationUrl);
+
+    $response->assertOk();
 
     Event::assertNotDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();

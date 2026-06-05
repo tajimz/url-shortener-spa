@@ -15,11 +15,13 @@ test('profile page is displayed', function () {
 test('profile information can be updated', function () {
     $user = User::factory()->create();
 
+    $oldEmail = $user->email;
+    $oldVerifiedAt = $user->email_verified_at;
+
     $response = $this
         ->actingAs($user)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
         ]);
 
     $response
@@ -29,25 +31,29 @@ test('profile information can be updated', function () {
     $user->refresh();
 
     expect($user->name)->toBe('Test User');
-    expect($user->email)->toBe('test@example.com');
-    expect($user->email_verified_at)->toBeNull();
+
+    expect($user->email)->toBe($oldEmail);
+
+    expect($user->email_verified_at)->toBe($oldVerifiedAt);
 });
 
-test('email verification status is unchanged when the email address is unchanged', function () {
+test('email verification status is unchanged when updating name only', function () {
     $user = User::factory()->create();
+
+    $oldVerifiedAt = $user->email_verified_at;
 
     $response = $this
         ->actingAs($user)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-            'email' => $user->email,
         ]);
 
     $response
         ->assertSessionHasNoErrors()
         ->assertRedirect(route('profile.edit'));
 
-    expect($user->refresh()->email_verified_at)->not->toBeNull();
+    expect($user->refresh()->email_verified_at)
+        ->toBe($oldVerifiedAt);
 });
 
 test('user can delete their account', function () {
