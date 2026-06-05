@@ -18,13 +18,15 @@ class SocialController extends Controller
     {
         $googleUser = Socialite::driver('google')->user();
 
-        $user = User::updateOrCreate([
+        $user = User::firstOrNew([
             'email' => $googleUser->getEmail(),
         ], [
             'name' => $googleUser->getName(),
-            'google_id' => $googleUser->getId(),
-            'email_verified_at' => now(),
         ]);
+        $user->google_id = $googleUser->getId();
+        $user->email_verified_at = now();
+        $user->save();
+
 
         Auth::login($user);
 

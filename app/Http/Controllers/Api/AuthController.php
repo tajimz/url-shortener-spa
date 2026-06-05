@@ -149,14 +149,16 @@ class AuthController extends Controller
         $name = $payload['name'] ?? 'User';
         $googleId = $payload['sub'] ?? null;
 
-        $user = User::updateOrCreate(
+        $user = User::firstOrCreate(
             ['email' => $email],
             [
                 'name' => $name,
-                'google_id' => $googleId,
-                'email_verified_at' => now(),
             ]
         );
+
+        $user->google_id = $googleId;
+        $user->email_verified_at = now();
+        $user->save();
 
         $token = $user->createToken($validated['device_name'])->plainTextToken;
 
