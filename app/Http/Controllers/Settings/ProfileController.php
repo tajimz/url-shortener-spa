@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 
 class ProfileController extends Controller
 {
@@ -54,5 +56,28 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+
+        if (! $request->hasValidSignature()) {
+            abort(403);
+        }
+
+        $user = User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            abort(403);
+        }
+
+        if (! $user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+            event(new Verified($user));
+        }
+
+        return Inertia::render('auth/EmailVerified', [
+            'status' => 'verified',
+        ]);
     }
 }
