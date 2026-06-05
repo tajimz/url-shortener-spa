@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ShortUrlController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\WelcomeController;
@@ -19,10 +18,13 @@ require __DIR__ . '/settings.php';
 
 Route::get('/{short_code}', [ShortUrlController::class, 'redirect']);
 
-Route::post('/urls', [ShortUrlController::class, 'store']);
-Route::delete('/urls/{id}', [ShortUrlController::class, 'destroy']);
-Route::get('/auth/google/redirect', [SocialController::class, 'redirect'])->name('auth.google.redirect');
-Route::get('/auth/google/callback', [SocialController::class, 'callback']);
+Route::post('/urls', [ShortUrlController::class, 'store'])->middleware('throttle:10,1');
+Route::delete('/urls/{id}', [ShortUrlController::class, 'destroy'])->middleware('throttle:10,1');
+
+Route::get('/auth/google/redirect', [SocialController::class, 'redirect'])->name('auth.google.redirect')->middleware('throttle:10,1');
+Route::get('/auth/google/callback', [SocialController::class, 'callback'])->middleware('throttle:10,1');
 
 Route::get('/{short_code}/password', [ShortUrlController::class, 'showPasswordForm'])->name('shorturls.password.form');
-Route::post('/{short_code}/password', [ShortUrlController::class, 'verifyPassword'])->name('shorturls.password.verify')->middleware('throttle:5,1');;
+Route::post('/{short_code}/password', [ShortUrlController::class, 'verifyPassword'])
+    ->name('shorturls.password.verify')
+    ->middleware('throttle:5,1');
