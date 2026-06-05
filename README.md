@@ -249,13 +249,10 @@ For reference implementation, see the Android companion app:
 
 ## License
 
-© 2026 Tajim. All rights reserved.
+© 2026 Tajim
 
-This project is not licensed for use, copying, modification, or redistribution without explicit written permission.
-
-If you want to use, host, or publish this project on any domain or platform, you must contact the author first:
-
-Contact: [com.tajim@gmail.com](mailto:com.tajim@gmail.com)
+This project is licensed under the MIT License.
+See LICENSE.md for full terms.
 
 ---
 
