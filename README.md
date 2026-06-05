@@ -23,6 +23,11 @@ A self-hosted URL shortener built with a Laravel-based REST API and a modern SPA
 * Android App: [https://github.com/tajimz/url-shortener-android](https://github.com/tajimz/url-shortener-android)
 
 ---
+## 📸 Web App Screenshots
+
+| Welcome 1 | Welcome 2 | Dashboard | Create URL |
+| --------- | --------- | --------- | ---------- |
+| ![](screenshots/0.png) | ![](screenshots/1.png) | ![](screenshots/2.png) | ![](screenshots/3.png) |
 
 ---
 
