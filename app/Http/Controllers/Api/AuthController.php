@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     //
-    function index(Request $request){
+    function index(Request $request)
+    {
         return $request->user();
     }
     function login(Request $request)
@@ -96,14 +97,15 @@ class AuthController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'old_password' => ['nullable', 'current_password'],
+            'name' => 'nullable|string|max:255',
+            'old_password' => ['required_with:new_password', 'current_password'],
             'new_password' => ['nullable', 'string', 'min:8'],
         ]);
+        if (!empty($validated['name'])) {
+            $user->name = $validated['name'];
+        }
 
-        $user->name = $validated['name'];
-
-        if ($request->filled('new_password')) {
+        if (!empty($validated['new_password'])) {
             $user->password = Hash::make($validated['new_password']);
         }
 
@@ -164,5 +166,4 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
-
 }
