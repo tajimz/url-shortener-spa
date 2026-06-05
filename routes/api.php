@@ -6,6 +6,7 @@ use App\Http\Controllers\ShortUrlController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/social-login', [AuthController::class, 'socialLogin']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/urls', [ShortUrlController::class, 'store']);
 Route::get('/app-settings', [AppSettingsController::class, 'index']);

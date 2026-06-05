@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Google_Client;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -113,4 +114,55 @@ class AuthController extends Controller
             'data' => $user
         ]);
     }
+
+    public function socialLogin(Request $request)
+    {
+        $validated = $request->validate([
+            'provider' => 'required|string',
+            'id_token' => 'required',
+            'device_name' => 'required'
+        ]);
+
+        $provider = $validated['provider'];
+
+        if ($provider !== 'google') {
+            return response()->json([
+                'message' => 'Unsupported provider'
+            ], 400);
+        }
+
+        $client = new Google_Client([
+            'client_id' => config('services.google.client_id')
+        ]);
+
+        $payload = $client->verifyIdToken($validated['id_token']);
+
+        if (!$payload) {
+            return response()->json([
+                'message' => 'Invalid Google token'
+            ], 401);
+        }
+
+        $email = $payload['email'];
+        $name = $payload['name'] ?? 'User';
+        $googleId = $payload['sub'] ?? null;
+
+        $user = User::updateOrCreate(
+            ['email' => $email],
+            [
+                'name' => $name,
+                'google_id' => $googleId,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $token = $user->createToken($validated['device_name'])->plainTextToken;
+
+        return response()->json([
+            'message' => 'Google login successful',
+            'token' => $token,
+            'user' => $user
+        ]);
+    }
+
 }
