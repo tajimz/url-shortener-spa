@@ -126,7 +126,7 @@ class ShortUrlController extends Controller
         }
 
         return Inertia::render('shorturls/VerifyPassword', [
-            'shortUrl' => $shortUrl
+            'short_code' => $short_code
         ]);
     }
 

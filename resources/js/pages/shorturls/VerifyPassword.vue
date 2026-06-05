@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 
-const props = defineProps({
-    shortUrl: Object,
-});
+const props = defineProps<{
+    short_code: string;
+}>();
 
 const form = useForm({
     password: '',
 });
 
 const submit = () => {
-    const link = `/${props.shortUrl.short_code}/password`;
+    const link = `/${props.short_code}/password`;
     form.post(link);
 };
 </script>
