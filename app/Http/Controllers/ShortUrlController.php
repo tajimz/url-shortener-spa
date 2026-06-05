@@ -20,7 +20,7 @@ class ShortUrlController extends Controller
 
         $urls = $user->shortUrls()->latest()->get();
 
-        if ($request->expectsJson()){
+        if ($request->expectsJson()) {
             return response()->json([
                 'data' => $urls,
                 'total_urls' => $urls->count(),
@@ -32,7 +32,6 @@ class ShortUrlController extends Controller
             'total_clicks' => $urls->sum('clicks'),
             'urls' => $urls,
         ]);
-
     }
     function store(Request $request)
     {
@@ -45,10 +44,10 @@ class ShortUrlController extends Controller
         $validated = $request->validate([
             'long_url' => 'required|url',
             'password' => ['nullable', 'string', 'min:4', 'max:50', 'regex:/^[A-Za-z0-9@#$_\-]+$/'],
-            'short_code' => ['nullable', 'min:3', 'max:20', 'unique:short_urls,short_code', new NotARoute(),],
+            'short_code' => ['nullable', 'min:3', 'max:20', 'unique:short_urls,short_code', new NotARoute(), 'regex:/^[A-Za-z0-9-]+$/'],
         ]);
 
-        $shortCode = $validated['short_code'] ?? Str::random(6);
+        $shortCode = $validated['short_code'] ?? $this->generateShortCode();
 
 
         if ($user) {
@@ -86,7 +85,7 @@ class ShortUrlController extends Controller
 
         $shortUrl->delete();
 
-        if ($request->expectsJson) return response()->json(['message' => 'URL deleted successfully']);
+        if ($request->expectsJson()) return response()->json(['message' => 'URL deleted successfully']);
         return back()->with('success', 'URL Deleted successfully!');
     }
     public function show(Request $request, $id)
@@ -152,5 +151,14 @@ class ShortUrlController extends Controller
         $shortUrl->increment('clicks');
 
         return Inertia::location($shortUrl->long_url);
+    }
+
+    function generateShortCode()
+    {
+        do {
+            $code = Str::random(rand(6, 15));
+        } while (ShortUrl::where('short_code', $code)->exists());
+
+        return $code;
     }
 }
