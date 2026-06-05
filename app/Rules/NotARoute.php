@@ -8,21 +8,97 @@ use Illuminate\Support\Facades\Route;
 
 class NotARoute implements ValidationRule
 {
+    private array $blocked = [
+        'admin',
+        'cpanel',
+        'dashboard',
+        'api',
+        'auth',
+        'login',
+        'logout',
+        'register',
+        'signup',
+        'signin',
+        'verify',
+        'verification',
+        'password',
+        'reset',
+        'forgot-password',
+
+        'user',
+        'users',
+        'profile',
+        'account',
+        'accounts',
+        'settings',
+        'preferences',
+
+        'system',
+        'root',
+        'superuser',
+        'staff',
+        'support',
+        'help',
+        'helpdesk',
+
+        'home',
+        'app',
+        'portal',
+        'console',
+        'panel',
+        'backend',
+        'frontend',
+
+        'v1',
+        'v2',
+        'webhook',
+        'hooks',
+        'graphql',
+
+        'about',
+        'contact',
+        'privacy',
+        'terms',
+        'legal',
+        'policy',
+
+        'www',
+        'mail',
+        'ftp',
+        'localhost',
+        'static',
+        'assets',
+        'storage',
+        'uploads',
+
+        'go',
+        'r',
+        'redirect',
+        's',
+        'short',
+        'shorten',
+        'link',
+        'links',
+        'stats',
+        'analytics',
+        'click',
+        'track',
+    ];
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        // Get all routes registered in the application
         $routes = Route::getRoutes();
 
         foreach ($routes as $route) {
-            // Get the URI (e.g., "dashboard", "settings/security")
             $uri = $route->uri();
-
-            // Extract the first part of the URL (e.g., "dashboard", "settings")
             $basePath = explode('/', $uri)[0];
 
-            // If the user's alias matches a top-level route, reject it
-            if ($value === $basePath) {
+            if (
+                $value === $basePath ||
+                in_array($value, $this->blocked, true)
+            ) {
                 $fail("The alias '{$value}' is reserved for a system page.");
+                return;
             }
         }
     }
