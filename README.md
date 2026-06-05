@@ -28,12 +28,12 @@ A self-hosted URL shortener built with a Laravel-based REST API and a modern SPA
 ### Welcome Screens
 | Welcome 1 | Welcome 2 |
 | ---------- | ---------- |
-| ![](screenshots/web/welcome1.png) | ![](screenshots/web/welcome2.png) |
+| ![](screenshots/0.png) | ![](screenshots/1.png) |
 
 ### App Screens
 | Dashboard | Create URL |
 | --------- | ---------- |
-| ![](screenshots/web/dashboard.png) | ![](screenshots/web/create.png) |
+| ![](screenshots/2.png) | ![](screenshots/3.png) |
 
 ---
 
