@@ -1,3 +1,6 @@
+<script setup lang="ts">
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+</script>
 <template>
     <div
         class="group flex cursor-pointer items-center gap-3 rounded-xl p-2 transition-all duration-300 hover:bg-[#FF4433]/5"
@@ -10,7 +13,7 @@
 
         <div class="grid flex-1 text-left text-sm leading-none">
             <span class="font-bold tracking-tight text-[#18181b] dark:text-[#EDEDEC]">
-                URL Shortener
+                {{ appName }}
             </span>
             <span class="mt-1 text-[11px] font-medium text-[#71717a] dark:text-[#A1A09A]">
                 Internal Dashboard
