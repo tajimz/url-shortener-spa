@@ -34,7 +34,7 @@ test('profile information can be updated', function () {
 
     expect($user->email)->toBe($oldEmail);
 
-    expect($user->email_verified_at)->toBe($oldVerifiedAt);
+    expect($user->email_verified_at)->toEqual($oldVerifiedAt);
 });
 
 test('email verification status is unchanged when updating name only', function () {
@@ -53,7 +53,7 @@ test('email verification status is unchanged when updating name only', function 
         ->assertRedirect(route('profile.edit'));
 
     expect($user->refresh()->email_verified_at)
-        ->toBe($oldVerifiedAt);
+        ->toEqual($oldVerifiedAt);
 });
 
 test('user can delete their account', function () {
